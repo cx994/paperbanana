@@ -19,8 +19,8 @@ jobs:
           pip install ruff
       - name: Lint
         run: |
-          ruff check paperbanana/ tests/
-          ruff format --check paperbanana/ tests/
+          ruff check paperbanana/ mcp_server/ tests/
+          ruff format --check paperbanana/ mcp_server/ tests/
 
   test:
     runs-on: ubuntu-latest

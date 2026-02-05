@@ -31,7 +31,8 @@ An agentic framework for generating publication-quality academic diagrams and st
 
 - Two-phase multi-agent pipeline with iterative refinement
 - Gemini-based VLM planning and image generation
-- CLI and Python API for diagrams and plots
+- CLI, Python API, and MCP server for IDE integration
+- Claude Code skills for `/generate-diagram`, `/generate-plot`, and `/evaluate-diagram`
 
 <p align="center">
   <img src="assets/img/hero_image.png" alt="PaperBanana takes paper as input and provide diagram as output" style="max-width: 960px; width: 100%; height: auto;"/>
@@ -49,10 +50,15 @@ An agentic framework for generating publication-quality academic diagrams and st
 ### Step 1: Install
 
 ```bash
+pip install paperbanana
+```
+
+Or install from source for development:
+
+```bash
 git clone https://github.com/llmsresearch/paperbanana.git
 cd paperbanana
-
-pip install -e ".[google]"
+pip install -e ".[dev,google]"
 ```
 
 ### Step 2: Get Your API Key
@@ -228,6 +234,33 @@ See `examples/generate_diagram.py` and `examples/generate_plot.py` for complete 
 
 ---
 
+## MCP Server
+
+PaperBanana includes an MCP server for use with Claude Code, Cursor, or any MCP-compatible client. Add the following config to use it via `uvx` without a local clone:
+
+```json
+{
+  "mcpServers": {
+    "paperbanana": {
+      "command": "uvx",
+      "args": ["--from", "paperbanana[mcp]", "paperbanana-mcp"],
+      "env": { "GOOGLE_API_KEY": "your-google-api-key" }
+    }
+  }
+}
+```
+
+Three MCP tools are exposed: `generate_diagram`, `generate_plot`, and `evaluate_diagram`.
+
+The repo also ships with 3 Claude Code skills:
+- `/generate-diagram <file> [caption]` - generate a methodology diagram from a text file
+- `/generate-plot <data-file> [intent]` - generate a statistical plot from CSV/JSON data
+- `/evaluate-diagram <generated> <reference>` - evaluate a diagram against a human reference
+
+See [`mcp_server/README.md`](mcp_server/README.md) for full setup details (Claude Code, Cursor, local development).
+
+---
+
 ## Configuration
 
 Default settings are in `configs/config.yaml`. Override via CLI flags or a custom YAML:
@@ -290,7 +323,8 @@ paperbanana/
 ├── examples/          # Working example scripts + sample inputs
 ├── scripts/           # Data curation and build scripts
 ├── tests/             # Test suite (34 tests)
-└── mcp_server/        # MCP server for IDE integration
+├── mcp_server/        # MCP server for IDE integration
+└── .claude/skills/    # Claude Code skills (generate-diagram, generate-plot, evaluate-diagram)
 ```
 
 ## Development
@@ -303,10 +337,10 @@ pip install -e ".[dev,google]"
 pytest tests/ -v
 
 # Lint
-ruff check paperbanana/ tests/ scripts/
+ruff check paperbanana/ mcp_server/ tests/ scripts/
 
 # Format
-ruff format paperbanana/ tests/ scripts/
+ruff format paperbanana/ mcp_server/ tests/ scripts/
 ```
 
 ## Citation

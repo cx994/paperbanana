@@ -84,8 +84,8 @@ pytest tests/ -v
 We use `ruff` for linting and formatting:
 
 ```bash
-ruff check paperbanana/ tests/ scripts/
-ruff format paperbanana/ tests/ scripts/
+ruff check paperbanana/ mcp_server/ tests/ scripts/
+ruff format paperbanana/ mcp_server/ tests/ scripts/
 ```
 
 ### Pull request process

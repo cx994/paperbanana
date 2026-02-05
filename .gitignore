@@ -50,7 +50,8 @@ paper.md
 
 # AI tool configs
 .cursor/
-.claude/
+.claude/*
+!.claude/skills/
 .deepseek/
 .gemini/
 .google/
