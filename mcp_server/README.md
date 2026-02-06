@@ -116,7 +116,14 @@ The server reads configuration from environment variables and `.env` files.
 | Variable | Default | Description |
 |----------|---------|-------------|
 | `GOOGLE_API_KEY` | (none) | Google API key (required) |
+| `GOOGLE_GENAI_BASE_URL` | (none) | Custom `google-genai` base_url for API gateways/proxies |
+| `GOOGLE_GENAI_USE_VERTEXAI` | (auto) | Set `false` if your gateway implements `/v1beta/...` Gemini Developer API paths |
+| `GOOGLE_GENAI_AUTHORIZATION` | (none) | Full Authorization header value (e.g. `Bearer <token>`) |
+| `GOOGLE_GENAI_AUTH_TOKEN` | (none) | Token-only alternative (PaperBanana prefixes `Bearer `) |
 | `SKIP_SSL_VERIFICATION` | `false` | Disable SSL verification for proxied environments |
+
+To route VLM and Image generation through different gateways/keys, use the `VLM_*` / `IMAGE_*` overrides.
+See `docs/custom_base_url.md` for the full list.
 
 ## Listing on MCP Directories
 

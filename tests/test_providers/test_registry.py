@@ -56,6 +56,41 @@ def test_google_genai_auth_token_is_bearer_prefixed():
     assert gen._resolve_auth_header() == "Bearer abc123"
 
 
+def test_component_specific_google_genai_settings_override_global():
+    """VLM and Image providers should support separate base_url/keys via component overrides."""
+    settings = Settings(
+        vlm_provider="gemini",
+        vlm_model="gemini-2.0-flash",
+        image_provider="google_imagen",
+        image_model="gemini-3-pro-image-preview",
+        google_api_key="global-key",
+        google_genai_base_url="https://global.example.com",
+        google_genai_auth_header="Bearer global",
+        google_genai_use_vertexai=True,
+        vlm_google_api_key="vlm-key",
+        vlm_google_genai_base_url="https://vlm.example.com",
+        vlm_google_genai_auth_header="Bearer vlm",
+        vlm_google_genai_use_vertexai=False,
+        image_google_api_key="img-key",
+        image_google_genai_base_url="https://img.example.com",
+        image_google_genai_auth_header="Bearer img",
+        image_google_genai_use_vertexai=True,
+    )
+
+    vlm = ProviderRegistry.create_vlm(settings)
+    gen = ProviderRegistry.create_image_gen(settings)
+
+    assert vlm._api_key == "vlm-key"
+    assert vlm._base_url == "https://vlm.example.com"
+    assert vlm._auth_header == "Bearer vlm"
+    assert vlm._use_vertexai is False
+
+    assert gen._api_key == "img-key"
+    assert gen._base_url == "https://img.example.com"
+    assert gen._auth_header == "Bearer img"
+    assert gen._use_vertexai is True
+
+
 def test_unknown_vlm_provider_raises():
     """Test that unknown VLM provider raises ValueError."""
     settings = Settings(vlm_provider="nonexistent")

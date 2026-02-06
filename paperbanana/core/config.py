@@ -83,6 +83,45 @@ class Settings(BaseSettings):
         default=None,
         alias="GOOGLE_GENAI_AUTHORIZATION",
     )
+    google_genai_use_vertexai: Optional[bool] = Field(
+        default=None, alias="GOOGLE_GENAI_USE_VERTEXAI"
+    )
+
+    # Per-component overrides (optional). If set, these take precedence over the global
+    # GOOGLE_* values.
+    # ── VLM ───────────────────────────────────────────────────────────
+    vlm_google_api_key: Optional[str] = Field(default=None, alias="VLM_GOOGLE_API_KEY")
+    vlm_google_genai_base_url: Optional[str] = Field(
+        default=None, alias="VLM_GOOGLE_GENAI_BASE_URL"
+    )
+    vlm_google_genai_auth_token: Optional[str] = Field(
+        default=None, alias="VLM_GOOGLE_GENAI_AUTH_TOKEN"
+    )
+    vlm_google_genai_auth_header: Optional[str] = Field(
+        default=None,
+        alias="VLM_GOOGLE_GENAI_AUTHORIZATION",
+    )
+    vlm_google_genai_use_vertexai: Optional[bool] = Field(
+        default=None,
+        alias="VLM_GOOGLE_GENAI_USE_VERTEXAI",
+    )
+
+    # ── Image Generation ──────────────────────────────────────────────
+    image_google_api_key: Optional[str] = Field(default=None, alias="IMAGE_GOOGLE_API_KEY")
+    image_google_genai_base_url: Optional[str] = Field(
+        default=None, alias="IMAGE_GOOGLE_GENAI_BASE_URL"
+    )
+    image_google_genai_auth_token: Optional[str] = Field(
+        default=None, alias="IMAGE_GOOGLE_GENAI_AUTH_TOKEN"
+    )
+    image_google_genai_auth_header: Optional[str] = Field(
+        default=None,
+        alias="IMAGE_GOOGLE_GENAI_AUTHORIZATION",
+    )
+    image_google_genai_use_vertexai: Optional[bool] = Field(
+        default=None,
+        alias="IMAGE_GOOGLE_GENAI_USE_VERTEXAI",
+    )
 
     # SSL
     skip_ssl_verification: bool = Field(default=False, alias="SKIP_SSL_VERIFICATION")

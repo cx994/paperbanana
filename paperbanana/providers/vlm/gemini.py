@@ -27,12 +27,14 @@ class GeminiVLM(VLMProvider):
         base_url: Optional[str] = None,
         auth_token: Optional[str] = None,
         auth_header: Optional[str] = None,
+        use_vertexai: Optional[bool] = None,
     ):
         self._api_key = api_key
         self._model = model
         self._base_url = base_url
         self._auth_token = auth_token
         self._auth_header = auth_header
+        self._use_vertexai = use_vertexai
         self._client = None
 
     @property
@@ -66,8 +68,12 @@ class GeminiVLM(VLMProvider):
 
                 http_options = self._build_http_options()
                 if http_options:
-                    # Custom base_url requires vertexai=True (google-genai SDK behavior).
-                    self._client = genai.Client(vertexai=True, http_options=http_options)
+                    vertexai = True if self._use_vertexai is None else self._use_vertexai
+                    self._client = genai.Client(
+                        vertexai=vertexai,
+                        api_key=self._api_key,
+                        http_options=http_options,
+                    )
                 else:
                     self._client = genai.Client(api_key=self._api_key)
             except ImportError:
