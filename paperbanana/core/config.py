@@ -74,10 +74,25 @@ class Settings(BaseSettings):
     # API Keys (loaded from environment)
     google_api_key: Optional[str] = Field(default=None, alias="GOOGLE_API_KEY")
 
+    # Google GenAI SDK (optional) — for API gateway/proxy setups
+    # When GOOGLE_GENAI_BASE_URL is set, providers will construct a google-genai Client with:
+    #   vertexai=True and http_options={"base_url": ..., "headers": {"Authorization": ...}}
+    google_genai_base_url: Optional[str] = Field(default=None, alias="GOOGLE_GENAI_BASE_URL")
+    google_genai_auth_token: Optional[str] = Field(default=None, alias="GOOGLE_GENAI_AUTH_TOKEN")
+    google_genai_auth_header: Optional[str] = Field(
+        default=None,
+        alias="GOOGLE_GENAI_AUTHORIZATION",
+    )
+
     # SSL
     skip_ssl_verification: bool = Field(default=False, alias="SKIP_SSL_VERIFICATION")
 
-    model_config = {"env_file": ".env", "env_file_encoding": "utf-8", "extra": "ignore"}
+    model_config = {
+        "env_file": ".env",
+        "env_file_encoding": "utf-8",
+        "extra": "ignore",
+        "populate_by_name": True,
+    }
 
     @classmethod
     def from_yaml(cls, config_path: str | Path, **overrides: Any) -> Settings:

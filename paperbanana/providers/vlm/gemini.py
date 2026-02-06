@@ -20,9 +20,19 @@ class GeminiVLM(VLMProvider):
     Free tier: https://makersuite.google.com/app/apikey
     """
 
-    def __init__(self, api_key: Optional[str] = None, model: str = "gemini-2.0-flash"):
+    def __init__(
+        self,
+        api_key: Optional[str] = None,
+        model: str = "gemini-2.0-flash",
+        base_url: Optional[str] = None,
+        auth_token: Optional[str] = None,
+        auth_header: Optional[str] = None,
+    ):
         self._api_key = api_key
         self._model = model
+        self._base_url = base_url
+        self._auth_token = auth_token
+        self._auth_header = auth_header
         self._client = None
 
     @property
@@ -33,12 +43,33 @@ class GeminiVLM(VLMProvider):
     def model_name(self) -> str:
         return self._model
 
+    def _resolve_auth_header(self) -> Optional[str]:
+        if self._auth_header:
+            return self._auth_header
+        if self._auth_token:
+            return f"Bearer {self._auth_token}"
+        return None
+
+    def _build_http_options(self) -> Optional[dict]:
+        if not self._base_url:
+            return None
+        http_options: dict = {"base_url": self._base_url}
+        auth_value = self._resolve_auth_header()
+        if auth_value:
+            http_options["headers"] = {"Authorization": auth_value}
+        return http_options
+
     def _get_client(self):
         if self._client is None:
             try:
                 from google import genai
 
-                self._client = genai.Client(api_key=self._api_key)
+                http_options = self._build_http_options()
+                if http_options:
+                    # Custom base_url requires vertexai=True (google-genai SDK behavior).
+                    self._client = genai.Client(vertexai=True, http_options=http_options)
+                else:
+                    self._client = genai.Client(api_key=self._api_key)
             except ImportError:
                 raise ImportError(
                     "google-genai is required for Gemini provider. "
@@ -47,7 +78,7 @@ class GeminiVLM(VLMProvider):
         return self._client
 
     def is_available(self) -> bool:
-        return self._api_key is not None
+        return (self._api_key is not None) or (self._base_url is not None)
 
     @retry(stop=stop_after_attempt(3), wait=wait_exponential(min=1, max=10))
     async def generate(

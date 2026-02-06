@@ -30,6 +30,32 @@ def test_create_google_imagen_gen():
     assert gen.name == "google_imagen"
 
 
+def test_providers_available_with_custom_base_url():
+    """Providers should be usable with a custom google-genai base_url (proxy/gateway)."""
+    settings = Settings(
+        vlm_provider="gemini",
+        image_provider="google_imagen",
+        google_genai_base_url="https://test-api-gateway-proxy.example.com",
+        google_genai_auth_header="Bearer test_token",
+    )
+
+    vlm = ProviderRegistry.create_vlm(settings)
+    gen = ProviderRegistry.create_image_gen(settings)
+    assert vlm.is_available() is True
+    assert gen.is_available() is True
+
+
+def test_google_genai_auth_token_is_bearer_prefixed():
+    """If only a token is provided, providers should build a Bearer Authorization header."""
+    from paperbanana.providers.image_gen.google_imagen import GoogleImagenGen
+    from paperbanana.providers.vlm.gemini import GeminiVLM
+
+    vlm = GeminiVLM(auth_token="abc123")
+    gen = GoogleImagenGen(auth_token="abc123")
+    assert vlm._resolve_auth_header() == "Bearer abc123"
+    assert gen._resolve_auth_header() == "Bearer abc123"
+
+
 def test_unknown_vlm_provider_raises():
     """Test that unknown VLM provider raises ValueError."""
     settings = Settings(vlm_provider="nonexistent")

@@ -25,6 +25,9 @@ class ProviderRegistry:
             return GeminiVLM(
                 api_key=settings.google_api_key,
                 model=settings.vlm_model,
+                base_url=settings.google_genai_base_url,
+                auth_token=settings.google_genai_auth_token,
+                auth_header=settings.google_genai_auth_header,
             )
         else:
             raise ValueError(f"Unknown VLM provider: {provider}. Available: gemini")
@@ -41,6 +44,9 @@ class ProviderRegistry:
             return GoogleImagenGen(
                 api_key=settings.google_api_key,
                 model=settings.image_model,
+                base_url=settings.google_genai_base_url,
+                auth_token=settings.google_genai_auth_token,
+                auth_header=settings.google_genai_auth_header,
             )
         else:
             raise ValueError(f"Unknown image provider: {provider}. Available: google_imagen")
