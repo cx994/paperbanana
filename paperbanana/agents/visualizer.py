@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import re
 import subprocess
 import sys
 import tempfile
@@ -142,17 +143,28 @@ class VisualizerAgent(BaseAgent):
         """Extract Python code from a VLM response."""
         # Look for code blocks
         if "```python" in response:
-            start = response.index("```python") + len("```python")
-            end = response.index("```", start)
+            start = response.find("```python") + len("```python")
+            end = response.find("```", start)
+            if end == -1:
+                logger.warning("Plot code block is missing closing fence; using remaining response")
+                return response[start:].strip()
             return response[start:end].strip()
         elif "```" in response:
-            start = response.index("```") + 3
-            end = response.index("```", start)
+            start = response.find("```") + 3
+            end = response.find("```", start)
+            if end == -1:
+                logger.warning("Plot code block is missing closing fence; using remaining response")
+                return response[start:].strip()
             return response[start:end].strip()
         return response.strip()
 
     def _execute_plot_code(self, code: str, output_path: str) -> bool:
         """Execute matplotlib code in a subprocess to generate a plot."""
+        # Strip any OUTPUT_PATH assignments from VLM-generated code so the
+        # injected value below is authoritative (the VLM is prompted to set
+        # OUTPUT_PATH itself, which would override the injected line).
+        code = re.sub(r'^OUTPUT_PATH\s*=\s*["\'].*["\']\s*$', "", code, flags=re.MULTILINE)
+
         # Inject the output path
         full_code = f'OUTPUT_PATH = "{output_path}"\n{code}'
 

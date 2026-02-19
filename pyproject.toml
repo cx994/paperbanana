@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "paperbanana"
-version = "0.1.1"
+version = "0.1.2"
 description = "Agentic framework for automated academic illustration generation"
 readme = "README.md"
 license = "MIT"
@@ -43,11 +43,13 @@ dependencies = [
 
 [project.optional-dependencies]
 google = ["google-genai>=1.0"]
-all-providers = ["google-genai>=1.0"]
+openai = ["openai>=1.0"]
+all-providers = ["google-genai>=1.0", "openai>=1.0"]
 mcp = ["fastmcp>=2.0"]
 dev = [
     "pytest>=8.0",
     "pytest-asyncio>=0.23",
+    "pytest-cov>=4.0",
     "ruff>=0.4",
 ]
 pdf = ["pymupdf>=1.24"]

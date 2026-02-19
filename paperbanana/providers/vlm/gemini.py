@@ -86,7 +86,7 @@ class GeminiVLM(VLMProvider):
     def is_available(self) -> bool:
         return (self._api_key is not None) or (self._base_url is not None)
 
-    @retry(stop=stop_after_attempt(3), wait=wait_exponential(min=1, max=10))
+    @retry(stop=stop_after_attempt(8), wait=wait_exponential(min=2, max=120))
     async def generate(
         self,
         prompt: str,

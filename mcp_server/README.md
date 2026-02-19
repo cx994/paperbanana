@@ -26,7 +26,7 @@ Add to `.claude/claude_code_config.json` (or project-level):
     "paperbanana": {
       "command": "uvx",
       "args": ["--from", "paperbanana[mcp]", "paperbanana-mcp"],
-      "env": { "GOOGLE_API_KEY": "your-google-api-key" }
+      "env": { "OPENAI_API_KEY": "your-openai-api-key" }
     }
   }
 }
@@ -42,7 +42,7 @@ Add to `.cursor/mcp.json` in your project:
     "paperbanana": {
       "command": "uvx",
       "args": ["--from", "paperbanana[mcp]", "paperbanana-mcp"],
-      "env": { "GOOGLE_API_KEY": "your-google-api-key" }
+      "env": { "OPENAI_API_KEY": "your-openai-api-key" }
     }
   }
 }
@@ -63,7 +63,7 @@ This installs `fastmcp` and registers the `paperbanana-mcp` console script. Then
   "mcpServers": {
     "paperbanana": {
       "command": "paperbanana-mcp",
-      "env": { "GOOGLE_API_KEY": "your-google-api-key" }
+      "env": { "OPENAI_API_KEY": "your-openai-api-key" }
     }
   }
 }
@@ -115,7 +115,9 @@ The server reads configuration from environment variables and `.env` files.
 
 | Variable | Default | Description |
 |----------|---------|-------------|
-| `GOOGLE_API_KEY` | (none) | Google API key (required) |
+| `OPENAI_API_KEY` | (none) | OpenAI API key (default provider) |
+| `OPENAI_BASE_URL` | `https://api.openai.com/v1` | OpenAI endpoint (or Azure OpenAI / Foundry URL) |
+| `GOOGLE_API_KEY` | (none) | Google API key (for Gemini provider) |
 | `GOOGLE_GENAI_BASE_URL` | (none) | Custom `google-genai` base_url for API gateways/proxies |
 | `GOOGLE_GENAI_USE_VERTEXAI` | (auto) | Set `false` if your gateway implements `/v1beta/...` Gemini Developer API paths |
 | `GOOGLE_GENAI_AUTHORIZATION` | (none) | Full Authorization header value (e.g. `Bearer <token>`) |
