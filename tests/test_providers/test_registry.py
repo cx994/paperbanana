@@ -12,12 +12,12 @@ def test_create_gemini_vlm():
     """Test creating a Gemini VLM provider."""
     settings = Settings(
         vlm_provider="gemini",
-        vlm_model="gemini-2.0-flash",
+        vlm_model="gemini-3-flash-preview",
         google_api_key="test-key",
     )
     vlm = ProviderRegistry.create_vlm(settings)
     assert vlm.name == "gemini"
-    assert vlm.model_name == "gemini-2.0-flash"
+    assert vlm.model_name == "gemini-3-flash-preview"
 
 
 def test_create_google_imagen_gen():
@@ -60,7 +60,7 @@ def test_component_specific_google_genai_settings_override_global():
     """VLM and Image providers should support separate base_url/keys via component overrides."""
     settings = Settings(
         vlm_provider="gemini",
-        vlm_model="gemini-2.0-flash",
+        vlm_model="gemini-3-flash-preview",
         image_provider="google_imagen",
         image_model="gemini-3-pro-image-preview",
         google_api_key="global-key",

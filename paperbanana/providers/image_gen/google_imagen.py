@@ -106,7 +106,7 @@ class GoogleImagenGen(ImageGenProvider):
             return "1K"
         if max_dim <= 2048:
             return "2K"
-        return "4K"
+        return "2k"
 
     @retry(stop=stop_after_attempt(3), wait=wait_exponential(min=1, max=10))
     async def generate(
