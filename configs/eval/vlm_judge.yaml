@@ -1,5 +1,5 @@
 # VLM-as-Judge evaluation config
-judge_model: gpt-4o
+judge_model: gemini-3-flash-preview
 dimensions:
   - faithfulness
   - conciseness

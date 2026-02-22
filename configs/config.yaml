@@ -14,7 +14,7 @@ image:
 pipeline:
   num_retrieval_examples: 10
   refinement_iterations: 3
-  output_resolution: "2k"   # 1k, 2k, 2k
+  output_resolution: "4k"   # 1k, 2k, 2k
   diagram_type: methodology  # methodology, statistical_plot
 
 # Reference set

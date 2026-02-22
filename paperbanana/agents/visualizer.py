@@ -18,6 +18,12 @@ from paperbanana.providers.base import ImageGenProvider, VLMProvider
 
 logger = structlog.get_logger()
 
+_RESOLUTION_MAP: dict[str, tuple[int, int]] = {
+    "1k": (1024, 576),
+    "2k": (1792, 1024),
+    "4k": (3840, 2160),
+}
+
 
 class VisualizerAgent(BaseAgent):
     """Generates images from descriptions.
@@ -32,10 +38,12 @@ class VisualizerAgent(BaseAgent):
         vlm_provider: VLMProvider,
         prompt_dir: str = "prompts",
         output_dir: str = "outputs",
+        output_resolution: str = "2k",
     ):
         super().__init__(vlm_provider, prompt_dir)
         self.image_gen = image_gen
         self.output_dir = Path(output_dir)
+        self.output_resolution = output_resolution
 
     @property
     def agent_name(self) -> str:
@@ -83,8 +91,8 @@ class VisualizerAgent(BaseAgent):
 
         image = await self.image_gen.generate(
             prompt=prompt,
-            width=1792,
-            height=1024,
+            width=_RESOLUTION_MAP.get(self.output_resolution.lower(), (1792, 1024))[0],
+            height=_RESOLUTION_MAP.get(self.output_resolution.lower(), (1792, 1024))[1],
             seed=seed,
         )
 

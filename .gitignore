@@ -33,7 +33,7 @@ run_*/
 !data/reference_sets/**/*.png
 !data/reference_sets/**/*.jpg
 !assets/img/hero_image.png
-
+.env.qfg
 # Reference set build artifacts (large, copyrighted PDFs)
 data/reference_sets/output/
 data/reference_sets/input/
