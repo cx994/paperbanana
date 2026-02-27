@@ -84,6 +84,7 @@ class ImageGenProvider(ABC):
         width: int = 1024,
         height: int = 1024,
         seed: Optional[int] = None,
+        aspect_ratio: Optional[str] = None,
     ) -> Image.Image:
         """Generate an image from a text prompt.
 
@@ -93,6 +94,8 @@ class ImageGenProvider(ABC):
             width: Output image width in pixels.
             height: Output image height in pixels.
             seed: Random seed for reproducibility.
+            aspect_ratio: Explicit aspect ratio string (e.g. "16:9", "2:3").
+                If provided, takes precedence over width/height ratio inference.
 
         Returns:
             Generated PIL Image.

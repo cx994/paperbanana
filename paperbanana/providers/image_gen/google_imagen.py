@@ -116,6 +116,7 @@ class GoogleImagenGen(ImageGenProvider):
         width: int = 1024,
         height: int = 1024,
         seed: Optional[int] = None,
+        aspect_ratio: Optional[str] = None,
     ) -> Image.Image:
         from google.genai import types
 
@@ -124,10 +125,13 @@ class GoogleImagenGen(ImageGenProvider):
         if negative_prompt:
             prompt = f"{prompt}\n\nAvoid: {negative_prompt}"
 
+        # Use explicit aspect_ratio if provided; fall back to width/height inference
+        resolved_ratio = aspect_ratio if aspect_ratio else self._aspect_ratio(width, height)
+
         config = types.GenerateContentConfig(
             response_modalities=["IMAGE"],
             image_config=types.ImageConfig(
-                aspect_ratio=self._aspect_ratio(width, height),
+                aspect_ratio=resolved_ratio,
                 image_size=self._image_size(width, height),
             ),
         )

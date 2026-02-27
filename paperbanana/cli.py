@@ -67,13 +67,10 @@ def generate(
     if output:
         overrides["output_dir"] = str(Path(output).parent)
 
-    if config:
-        settings = Settings.from_yaml(config, **overrides)
-    else:
-        from dotenv import load_dotenv
+    from dotenv import load_dotenv
 
-        load_dotenv()
-        settings = Settings(**overrides)
+    load_dotenv()
+    settings = Settings.from_yaml(config, **overrides)
 
     # Build generation input
     gen_input = GenerationInput(
@@ -147,7 +144,7 @@ def plot(
 
     load_dotenv()
 
-    settings = Settings(
+    settings = Settings.from_yaml(
         vlm_provider=vlm_provider,
         refinement_iterations=iterations,
     )
@@ -248,7 +245,7 @@ def evaluate(
 
     load_dotenv()
 
-    settings = Settings(vlm_provider=vlm_provider)
+    settings = Settings.from_yaml(vlm_provider=vlm_provider)
     from paperbanana.providers.registry import ProviderRegistry
 
     vlm = ProviderRegistry.create_vlm(settings)

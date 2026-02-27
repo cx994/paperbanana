@@ -14,7 +14,8 @@ image:
 pipeline:
   num_retrieval_examples: 10
   refinement_iterations: 3
-  output_resolution: "4k"   # 1k, 2k, 2k
+  output_resolution: "4k"   # 1k, 2k, 4k
+  aspect_ratio: "2:3"      # 16:9, 3:2, 1:1, 2:3, 9:16
   diagram_type: methodology  # methodology, statistical_plot
 
 # Reference set

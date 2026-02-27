@@ -30,6 +30,7 @@ class PipelineConfig(BaseSettings):
     num_retrieval_examples: int = 10
     refinement_iterations: int = 3
     output_resolution: str = "2k"
+    aspect_ratio: str = "16:9"  # 16:9, 3:2, 1:1, 2:3, 9:16
     diagram_type: str = "methodology"
 
 
@@ -49,6 +50,12 @@ class OutputConfig(BaseSettings):
     save_metadata: bool = True
 
 
+_DEFAULT_CONFIG_PATHS = (
+    Path("configs/config.yaml"),
+    Path("config.yaml"),
+)
+
+
 class Settings(BaseSettings):
     """Main PaperBanana settings, loaded from env vars and config files."""
 
@@ -62,6 +69,7 @@ class Settings(BaseSettings):
     num_retrieval_examples: int = 10
     refinement_iterations: int = 3
     output_resolution: str = "2k"
+    aspect_ratio: str = "16:9"  # 16:9, 3:2, 1:1, 2:3, 9:16
 
     # Reference settings
     reference_set_path: str = "data/reference_sets"
@@ -134,10 +142,20 @@ class Settings(BaseSettings):
     }
 
     @classmethod
-    def from_yaml(cls, config_path: str | Path, **overrides: Any) -> Settings:
-        """Load settings from a YAML config file with optional overrides."""
-        config_path = Path(config_path)
-        if config_path.exists():
+    def from_yaml(cls, config_path: str | Path | None = None, **overrides: Any) -> Settings:
+        """Load settings from a YAML config file with optional overrides.
+
+        If config_path is None, auto-discovers configs/config.yaml or config.yaml.
+        """
+        if config_path is not None:
+            config_path = Path(config_path)
+        else:
+            # Auto-discover default config
+            config_path = next(
+                (p for p in _DEFAULT_CONFIG_PATHS if p.exists()), None
+            )
+
+        if config_path is not None and config_path.exists():
             with open(config_path) as f:
                 yaml_config = yaml.safe_load(f) or {}
         else:
@@ -159,6 +177,7 @@ def _flatten_yaml(config: dict, prefix: str = "") -> dict:
         "pipeline.num_retrieval_examples": "num_retrieval_examples",
         "pipeline.refinement_iterations": "refinement_iterations",
         "pipeline.output_resolution": "output_resolution",
+        "pipeline.aspect_ratio": "aspect_ratio",
         "reference.path": "reference_set_path",
         "reference.guidelines_path": "guidelines_path",
         "output.dir": "output_dir",

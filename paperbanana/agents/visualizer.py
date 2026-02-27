@@ -18,11 +18,30 @@ from paperbanana.providers.base import ImageGenProvider, VLMProvider
 
 logger = structlog.get_logger()
 
-_RESOLUTION_MAP: dict[str, tuple[int, int]] = {
-    "1k": (1024, 576),
-    "2k": (1792, 1024),
-    "4k": (3840, 2160),
+# Base max-dimension per resolution tier
+_BASE_DIM: dict[str, int] = {"1k": 1024, "2k": 2048, "4k": 3840}
+
+# Supported aspect ratios (must match Google Imagen accepted values)
+_ASPECT_RATIOS: dict[str, tuple[int, int]] = {
+    "16:9": (16, 9),
+    "3:2": (3, 2),
+    "1:1": (1, 1),
+    "2:3": (2, 3),
+    "9:16": (9, 16),
 }
+
+
+def _compute_dimensions(resolution: str, aspect_ratio: str) -> tuple[int, int]:
+    """Compute (width, height) from resolution tier and aspect ratio."""
+    base = _BASE_DIM.get(resolution.lower(), 2048)
+    w_r, h_r = _ASPECT_RATIOS.get(aspect_ratio, (16, 9))
+    if w_r >= h_r:
+        width = base
+        height = int(base * h_r / w_r)
+    else:
+        height = base
+        width = int(base * w_r / h_r)
+    return width, height
 
 
 class VisualizerAgent(BaseAgent):
@@ -39,11 +58,13 @@ class VisualizerAgent(BaseAgent):
         prompt_dir: str = "prompts",
         output_dir: str = "outputs",
         output_resolution: str = "2k",
+        aspect_ratio: str = "16:9",
     ):
         super().__init__(vlm_provider, prompt_dir)
         self.image_gen = image_gen
         self.output_dir = Path(output_dir)
         self.output_resolution = output_resolution
+        self.aspect_ratio = aspect_ratio
 
     @property
     def agent_name(self) -> str:
@@ -89,11 +110,13 @@ class VisualizerAgent(BaseAgent):
 
         logger.info("Generating diagram image", iteration=iteration)
 
+        width, height = _compute_dimensions(self.output_resolution, self.aspect_ratio)
         image = await self.image_gen.generate(
             prompt=prompt,
-            width=_RESOLUTION_MAP.get(self.output_resolution.lower(), (1792, 1024))[0],
-            height=_RESOLUTION_MAP.get(self.output_resolution.lower(), (1792, 1024))[1],
+            width=width,
+            height=height,
             seed=seed,
+            aspect_ratio=self.aspect_ratio,
         )
 
         if output_path is None:

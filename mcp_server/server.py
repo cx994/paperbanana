@@ -44,7 +44,7 @@ async def generate_diagram(
     Returns:
         The generated diagram as a PNG image.
     """
-    settings = Settings(refinement_iterations=iterations)
+    settings = Settings.from_yaml(refinement_iterations=iterations)
     pipeline = PaperBananaPipeline(settings=settings)
 
     gen_input = GenerationInput(
@@ -76,7 +76,7 @@ async def generate_plot(
     """
     raw_data = json.loads(data_json)
 
-    settings = Settings(refinement_iterations=iterations)
+    settings = Settings.from_yaml(refinement_iterations=iterations)
     pipeline = PaperBananaPipeline(settings=settings)
 
     gen_input = GenerationInput(
@@ -112,7 +112,7 @@ async def evaluate_diagram(
     Returns:
         Formatted evaluation scores with per-dimension results and overall winner.
     """
-    settings = Settings()
+    settings = Settings.from_yaml()
     vlm = ProviderRegistry.create_vlm(settings)
     judge = VLMJudge(vlm_provider=vlm)
 
